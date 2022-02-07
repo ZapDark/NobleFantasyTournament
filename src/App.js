@@ -1,6 +1,9 @@
 import logo from './logo.svg';
 import './App.css';
 
+import ConnectButton from "./connectButton";
+import { ChakraProvider } from "@chakra-ui/react";
+
 function App() {
   return (
     <div className="App">
@@ -18,6 +21,8 @@ function App() {
           Learn React
         </a>
       </header>
+      <ConnectButton />
+        
     </div>
   );
 }
