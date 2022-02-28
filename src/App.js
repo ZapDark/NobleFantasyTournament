@@ -1,23 +1,25 @@
-import logo from './logo.svg';
 import './App.css';
 
 import ConnectButton from "./connectButton";
-import { ChakraProvider } from "@chakra-ui/react";
+
+import scroll from "./images/scroll.png" 
 
 function App() {
   return (
     <div className="App">
       
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-
-        <ConnectButton />
-      </header>
-      
+        <div className="title">
+          <img src={scroll} class="img" alt="title"/>
+          <div class="centered">Noble Fantasy Tournament</div>
+        </div> 
+        <div className="connectButton">
+          {/* <img src={scroll} class="img" alt="title"/> */}
+          {/* <div class="centered">Connect to metamask</div> */}
+          <ConnectButton/>
+        </div>
         
+      </header>      
     </div>
   );
 }
