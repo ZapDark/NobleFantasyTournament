@@ -63,7 +63,7 @@ contract NobleToken is ERC721Enumerable, Ownable {
         require(balance > 0, "No ether to withdraw");
         
         (bool success, ) = (msg.sender).call{value: balance}("");
-        require(success, "Failed to send ether to owner");
+        require(success, "Failed to send ether to owner.");
     }
 }
 

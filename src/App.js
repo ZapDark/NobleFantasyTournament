@@ -14,7 +14,7 @@ const { abi } = require('./artifacts/contracts/NobleToken.json');
 
 function App() {
 
-  const contractAddress = "0xaf52FD88baeE7e7e2b379f2596302174d2693f68";
+  const contractAddress = "0xA757EFC0fB009d92EDEB9530bcd1FfBC90776D4b";
   const contractAbi = abi;
   const [currentAccount, setCurrentAccount] = useState(null);
 
@@ -68,7 +68,7 @@ function App() {
         const contract = new ethers.Contract(contractAddress, contractAbi, signer);
 
         console.log("Minting NFT");
-        let nftTxn = await contract.mintToken(1, {value: ethers.utils.parseEther("0.1")});
+        let nftTxn = await contract.mintNFTs(1, {value: ethers.utils.parseEther("0.02")});
 
         console.log("Mining... please wait");
         await nftTxn.wait();
