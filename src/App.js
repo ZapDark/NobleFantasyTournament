@@ -28,6 +28,16 @@ function App() {
     else{
       console.log("Wallet connected");
     }
+
+    const accounts = await ethereum.request({ method: "eth_accounts" });
+
+    if (accounts.length !== 0) {
+      const account = accounts[0];
+      setCurrentAccount(account);
+    }
+    else{
+      console.log("No accounts found");
+    }
   }
 
   const connectWalletHandler = async () => { 
@@ -48,7 +58,30 @@ function App() {
   }
 
 
-  const mintNftHandler = async () => { }
+  const mintNftHandler = async () => {
+    try{
+      const { ethereum } = window;
+
+      if(ethereum){
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+
+        console.log("Minting NFT");
+        let nftTxn = await contract.mintToken(1, {value: ethers.utils.parseEther("0.1")});
+
+        console.log("Mining... please wait");
+        await nftTxn.wait();
+        console.log("Minted NFT");
+      }
+      else {
+        console.log("Eth object not found");
+      }
+    }
+    catch(err){
+      console.log(err);
+    }
+   }
 
   const connectWalletButton = () => {
     return (
@@ -74,7 +107,7 @@ function App() {
     <div className='main-app'>
       <h1>Mint NFT</h1>
       <div>
-        {connectWalletButton()}
+        {currentAccount ? mintNftButton() : connectWalletButton()}
       </div>
     </div>
   )
