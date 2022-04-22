@@ -2,11 +2,11 @@ import './App.css';
 import Web3Modal from "web3modal";
 import { ethers, Contract } from 'ethers';
 
-import ConnectButton from "./connectButton";
+import ConnectButton from "./Components/connectButton";
 
 import scroll from "./images/scroll.png" 
 import background from "./images/bg.jpg" 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { TextField } from '@material-ui/core';
 import { Button } from '@chakra-ui/react';
 
@@ -14,105 +14,70 @@ const { abi } = require('./artifacts/contracts/NobleToken.json');
 
 function App() {
 
-  const initWeb3 = async () => {
+  const contractAddress = "0xaf52FD88baeE7e7e2b379f2596302174d2693f68";
+  const contractAbi = abi;
+  const [currentAccount, setCurrentAccount] = useState(null);
 
-    return new Promise (async (resolve, reject) => {
-
-      const web3Modal = new Web3Modal({
-
-        cacheProvider: true
-      });
-
-      const connection = await web3Modal.connect();
-
-      const provider = new ethers.providers.Web3Provider(connection);
-
-      const {chainId} = await provider.getNetwork();
-
-      const signer = provider.getSigner();
-
-      const contract = new Contract('0xDee20e4F4d533Af08E1a93E772284b15b9f19beA', abi, signer);
-
-      resolve({contract});
-    })
+  const checkWalletIsConnected = async () => { 
+    const { ethereum } = window;
+    
+    if(!ethereum) {
+      console.log("No wallet connected");
+      return;
+    }
+    else{
+      console.log("Wallet connected");
+    }
   }
 
-  const mintToken = async (tokenName) => {
-    if (!tokenName) return;
+  const connectWalletHandler = async () => { 
+    const { ethereum } = window;
+    
+    if(!ethereum) {
+      alert("Please install MetaMask");
+    }
 
-    contract.mintToken(tokenName).then((tx) => {
+    try{
+      const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+      console.log(accounts[0]);
+      setCurrentAccount(accounts[0]);
+    }
+    catch(err){
+      console.log(err);
+    }
+  }
 
-      tx.wait().then(() => {
 
-        setLogMessage('Token minted.');
+  const mintNftHandler = async () => { }
 
-      });
+  const connectWalletButton = () => {
+    return (
+      <button onClick={connectWalletHandler} className='cta-button connect-wallet-button'>
+        Connect Wallet
+      </button>
+    )
+  }
 
-    }).catch((err) => setLogMessage(err.message));
-
-  };
-
-  const getAllTokens = async () => {
-    const tokens = await contract.getAllTokens();
-    setTokens(tokens);
-  };
-
-  const getMyTokens = async () => {
-    const myTokens = await contract.getMyTokens();
-    setMyTokens(myTokens);
+  const mintNftButton = () => {
+    return (
+      <button onClick={mintNftHandler} className='cta-button mint-nft-button'>
+        Mint NFT
+      </button>
+    )
   }
 
   useEffect(() => {
-
-    initWeb3().then(async ({contract}) => {
-
-      setContract(contract);
-
-      const tokens = await contract.getAllTokens();
-
-      setTokens(tokens);
-
-    }).catch((err) => {
-
-      console.log(err);
-
-      setLogMessage(err);
-    });
-
-  }, []);
+    checkWalletIsConnected();
+  }, [])
 
   return (
-    <div className="App" >
-      <img src={background} className="bg" height="2000vmin" max-width="100%" object-fit="contain"/>
-      <header className="App-header" >
-        
-        <div className="title" >
-          <img src={scroll} class="img" alt="title"/>
-          <div class="centered">Noble Fantasy Tournament</div>
-        </div> 
-
-        <ConnectButton/>
-
-        <div className="playButton">
-          <img src={scroll} class="img" alt="title"/>
-          <div class="centered">Play</div>
-        </div>
-      </header>  
-
-      <body>
-        testing text
-        <form>
-          <h2> Mint New Token </h2>
-          <Button onClick={() => mintToken()}> Mint Token </Button>
-        </form>
-        <br />
-        <div>
-          <Button onClick={getMyTokens}>My Minted Tokens</Button>
-          <Button onClick={getAllTokens}>All Minted Tokens</Button>
-        </div>
-      </body>    
+    <div className='main-app'>
+      <h1>Mint NFT</h1>
+      <div>
+        {connectWalletButton()}
+      </div>
     </div>
-  );
+  )
 }
 
 export default App;

@@ -3,8 +3,8 @@
 import { Button, Box, Text } from "@chakra-ui/react";
 import { useEthers, useEtherBalance } from "@usedapp/core";
 import { formatEther } from "@ethersproject/units";
-import scroll from "./images/scroll.png" 
-import './App.css';
+import scroll from "./../images/scroll.png";
+import './../App.css';
 
 
 export default function ConnectButton() {
