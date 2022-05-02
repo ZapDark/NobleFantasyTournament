@@ -2,19 +2,21 @@ import './App.css';
 import Web3Modal from "web3modal";
 import { ethers, Contract } from 'ethers';
 
-import ConnectButton from "./Components/connectButton";
+import Play from './pages/Play';
+import About from './pages/About';
 
 import scroll from "./images/scroll.png" 
 import background from "./images/bg.jpg" 
 import { useEffect, useState } from 'react';
 import { TextField } from '@material-ui/core';
-import { Button } from '@chakra-ui/react';
+import { Button, Center } from '@chakra-ui/react';
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 const { abi } = require('./artifacts/contracts/NobleToken.json');
 
 function App() {
 
-  const contractAddress = "0x650FBce849d36595b4Db1C9669ce2d22e15008de";
+  const contractAddress = "0x8FEd1815822C410ee3C385d5Fc5Bbfa5593cD3f2";
   const contractAbi = abi;
   const [currentAccount, setCurrentAccount] = useState(null);
 
@@ -99,7 +101,7 @@ function App() {
 
   const connectWalletButton = () => {
     return (
-      <button onClick={connectWalletHandler} className='cta-button connect-wallet-button'>
+      <button style={{padding: '10px'}} onClick={connectWalletHandler} className='cta-button connect-wallet-button'>
         Connect Wallet
       </button>
     )
@@ -107,7 +109,7 @@ function App() {
 
   const mintNftButton = () => {
     return (
-      <button onClick={mintNftHandler} className='cta-button mint-nft-button'>
+      <button style={{padding: '10px'}} onClick={mintNftHandler} className='cta-button mint-nft-button'>
         Mint NFT
       </button>
     )
@@ -115,7 +117,7 @@ function App() {
 
   const getMyNftButton = () => {
     return (
-      <button onClick={getMyNftHandler} className='cta-button get-my-nft-button'>
+      <button style={{padding: '10px'}} onClick={getMyNftHandler} className='cta-button get-my-nft-button'>
         Get My NFT
         </button>
     )
@@ -126,12 +128,29 @@ function App() {
   }, [])
 
   return (
-    <div className='main-app'>
-      <h1>Mint NFT</h1>
-      <div>
+    <div style={{height: '100%', width: '100%', backgroundImage: `url(${background})`}} className='main-app'>
+      <header>
+        <Router>
+        <div style={{backgroundColor: 'grey'}}>
+          <li>
+            <Link to="/About">About</Link>
+          </li>
+          <li>
+            <Link to="/Play">Play!</Link>
+          </li>
+        </div>
+        <Routes>
+          <Route path="/About" element={About} />
+          <Route path="/Play" element={Play} />
+        </Routes>
+      </Router>
+      </header>
+      
+      <h1 style={{textAlign: 'center'}}>Mint NFT</h1>
+      <div style={{textAlign: 'center'}}>
         {currentAccount ? mintNftButton() : connectWalletButton()}
       </div>
-      <div>
+      <div style={{padding: '10px', textAlign: 'center'}}>
         {currentAccount ? getMyNftButton() : null}
       </div>
     </div>
