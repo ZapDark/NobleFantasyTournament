@@ -18,6 +18,14 @@ contract NobleToken is ERC721Enumerable, Ownable {
 
     string public baseTokenURI;
 
+    struct Noble {
+        uint tokenId;
+        address owner;
+    }
+
+    Noble[] public allTokens;
+    mapping(address => Noble[]) public tokenAddress;
+
     constructor(string memory baseURI) ERC721("NobleToken", "NBL") {
         setBaseURI(baseURI);
     }
@@ -45,17 +53,17 @@ contract NobleToken is ERC721Enumerable, Ownable {
     function _mintSingleNFT() private {
         uint newTokenId = _tokenIds.current();
         _safeMint(msg.sender, newTokenId);
+        allTokens.push(Noble(newTokenId, msg.sender));
+        tokenAddress[msg.sender].push(Noble(newTokenId, msg.sender));
         _tokenIds.increment();
     }
 
-    function getMyTokens(address _owner) external view returns (uint[] memory) {
-        uint tokenCount = balanceOf(_owner);
-        uint[] memory tokenIds = new uint256[](tokenCount);
+    function getAllTokens() external view returns(Noble[] memory){
+        return allTokens;
+    }
 
-        for(uint i = 0; i < tokenCount; i++) {
-            tokenIds[i] = tokenOfOwnerByIndex(_owner, i);
-        }
-        return tokenIds;
+    function getMyTokens() external view returns (Noble[] memory){
+        return tokenAddress[msg.sender];
     }
 
     function withdraw() public payable onlyOwner {

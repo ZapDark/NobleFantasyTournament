@@ -18,9 +18,12 @@ function App() {
   const contractAbi = abi;
   const [currentAccount, setCurrentAccount] = useState(null);
 
+  const { ethereum } = window;
+  const provider = new ethers.providers.Web3Provider(ethereum);
+  const signer = provider.getSigner();
+  const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+
   const checkWalletIsConnected = async () => { 
-    const { ethereum } = window;
-    
     if(!ethereum) {
       console.log("No wallet connected");
       return;
@@ -57,16 +60,9 @@ function App() {
     }
   }
 
-
   const mintNftHandler = async () => {
     try{
-      const { ethereum } = window;
-
       if(ethereum){
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        const signer = provider.getSigner();
-        const contract = new ethers.Contract(contractAddress, contractAbi, signer);
-
         console.log("Minting NFT");
         let nftTxn = await contract.mintNFTs(1, {value: ethers.utils.parseEther("1.00")});
 
@@ -82,6 +78,24 @@ function App() {
       console.log(err);
     }
    }
+
+   const getMyNftHandler = async () => {
+    try{
+      if(ethereum){
+        console.log("Getting NFT");
+        let nfts = await contract.getMyTokens();
+        console.log("NFT retrieved : " + nfts);
+        let uri = await contract.tokenURI();
+        console.log("URI : " + uri.toString());
+      }
+      else{
+        console.log("Eth object not found");
+      }
+    }
+    catch(err){
+      console.log(err);
+    }
+  }
 
   const connectWalletButton = () => {
     return (
@@ -99,6 +113,14 @@ function App() {
     )
   }
 
+  const getMyNftButton = () => {
+    return (
+      <button onClick={getMyNftHandler} className='cta-button get-my-nft-button'>
+        Get My NFT
+        </button>
+    )
+  }
+
   useEffect(() => {
     checkWalletIsConnected();
   }, [])
@@ -108,6 +130,9 @@ function App() {
       <h1>Mint NFT</h1>
       <div>
         {currentAccount ? mintNftButton() : connectWalletButton()}
+      </div>
+      <div>
+        {currentAccount ? getMyNftButton() : null}
       </div>
     </div>
   )
