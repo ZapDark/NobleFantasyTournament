@@ -16,7 +16,7 @@ const { abi } = require('./artifacts/contracts/NobleToken.json');
 
 function App() {
 
-  const contractAddress = "0x8FEd1815822C410ee3C385d5Fc5Bbfa5593cD3f2";
+  const contractAddress = "0x4131e415B69E139dB9d2A4dB1A8335715c64ce8B";
   const contractAbi = abi;
   const [currentAccount, setCurrentAccount] = useState(null);
 
@@ -51,7 +51,6 @@ function App() {
     if(!ethereum) {
       alert("Please install MetaMask");
     }
-
     try{
       const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
       console.log(accounts[0]);
@@ -66,7 +65,7 @@ function App() {
     try{
       if(ethereum){
         console.log("Minting NFT");
-        let nftTxn = await contract.mintNFTs(1, {value: ethers.utils.parseEther("1.00")});
+        let nftTxn = await contract.mintNFTs(1, {value: ethers.utils.parseEther("0.2")});
 
         console.log("Mining... please wait");
         await nftTxn.wait();
@@ -85,10 +84,12 @@ function App() {
     try{
       if(ethereum){
         console.log("Getting NFT");
-        let nfts = await contract.getMyTokens();
+        const nfts = await contract.getMyTokens();
         console.log("NFT retrieved : " + nfts);
-        let uri = await contract.tokenURI();
+        const baseUri = await contract.tokenURI(0);
+        const uri = baseUri.toString() + ".json";
         console.log("URI : " + uri.toString());
+        const img = await contract.tokenURI(0);
       }
       else{
         console.log("Eth object not found");
@@ -97,6 +98,7 @@ function App() {
     catch(err){
       console.log(err);
     }
+
   }
 
   const connectWalletButton = () => {
